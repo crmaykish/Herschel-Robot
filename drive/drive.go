@@ -6,6 +6,8 @@ import (
 
 	"time"
 
+	"strconv"
+
 	"github.com/tarm/serial"
 )
 
@@ -43,6 +45,13 @@ func sendSerial(message string) {
 		// TODO: Up the baudrate and use a call/response system instead of just sleeping and hoping it's long enough
 		time.Sleep(time.Millisecond * 16)
 	}
+}
+
+func Drive(left, right int) {
+	sendSerial("FL:" + strconv.Itoa(left) + "!")
+	sendSerial("FR:" + strconv.Itoa(right) + "!")
+	sendSerial("BL:" + strconv.Itoa(left) + "!")
+	sendSerial("BR:" + strconv.Itoa(right) + "!")
 }
 
 // Stop all motors
