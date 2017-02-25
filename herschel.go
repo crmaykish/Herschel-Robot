@@ -13,7 +13,11 @@ func main() {
 	drive.Connect()
 
 	for {
-		drive.Go()
+		drive.Left()
+		time.Sleep(time.Second)
+		drive.Stop()
+		time.Sleep(time.Second)
+		drive.Right()
 		time.Sleep(time.Second)
 		drive.Stop()
 		time.Sleep(time.Second)

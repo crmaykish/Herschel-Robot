@@ -41,7 +41,7 @@ func sendSerial(message string) {
 		fmt.Println("sending: " + message)
 		port.Write([]byte(message + "\n"))
 		// TODO: Up the baudrate and use a call/response system instead of just sleeping and hoping it's long enough
-		time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 16)
 	}
 }
 
@@ -50,10 +50,26 @@ func Stop() {
 	sendSerial("FL:0!")
 	sendSerial("FR:0!")
 	sendSerial("BL:0!")
+	sendSerial("BR:0!")
 }
 
-func Go() {
+func Forward() {
 	sendSerial("FL:255!")
 	sendSerial("FR:255!")
 	sendSerial("BL:255!")
+	sendSerial("BR:255!")
+}
+
+func Left() {
+	sendSerial("FL:-170!")
+	sendSerial("FR:170!")
+	sendSerial("BL:-170!")
+	sendSerial("BR:170!")
+}
+
+func Right() {
+	sendSerial("FL:170!")
+	sendSerial("FR:-170!")
+	sendSerial("BL:170!")
+	sendSerial("BR:-170!")
 }
