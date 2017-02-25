@@ -61,24 +61,3 @@ func Stop() {
 	sendSerial("BL:0!")
 	sendSerial("BR:0!")
 }
-
-func Forward() {
-	sendSerial("FL:255!")
-	sendSerial("FR:255!")
-	sendSerial("BL:255!")
-	sendSerial("BR:255!")
-}
-
-func Left() {
-	sendSerial("FL:-170!")
-	sendSerial("FR:170!")
-	sendSerial("BL:-170!")
-	sendSerial("BR:170!")
-}
-
-func Right() {
-	sendSerial("FL:170!")
-	sendSerial("FR:-170!")
-	sendSerial("BL:170!")
-	sendSerial("BR:-170!")
-}
