@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,8 +11,21 @@ import (
 	"github.com/crmaykish/herschel/drive"
 )
 
+// LoopRate is the rate to run the control loop at (in Hertz)
+const LoopRate = 60
+
+// MinJoystickSpeed before driving will start
+const MinJoystickSpeed = 1000
+
+// Map x from one range to another
 func mapRange(x, inMin, inMax, outMin, outMax int) int {
+	// TODO: check that x is within range first
 	return (x-inMin)*(outMax-outMin)/(inMax-inMin) + outMin
+}
+
+// x is in range (inclusive)
+func between(x, min, max int) bool {
+	return x <= max && x >= min
 }
 
 // Stop motors and disconnect serial connection
@@ -23,6 +35,35 @@ func stop() {
 	}
 	drive.Stop()
 	drive.Disconnect()
+}
+
+// Main control loop
+func loop() {
+	fmt.Println("Start control loop...")
+	for {
+		var left = 0
+		var right = 0
+
+		var leftInRange = between(xbox.LeftY(), MinJoystickSpeed, xbox.AnalogMax) || between(xbox.LeftY(), xbox.AnalogMin, -MinJoystickSpeed)
+		var rightInRange = between(xbox.RightY(), MinJoystickSpeed, xbox.AnalogMax) || between(xbox.RightY(), xbox.AnalogMin, -MinJoystickSpeed)
+
+		if leftInRange {
+			left = mapRange(xbox.LeftY(), xbox.AnalogMin, xbox.AnalogMax, drive.DriveMin, drive.DriveMax)
+		}
+
+		if rightInRange {
+			right = mapRange(xbox.RightY(), xbox.AnalogMin, xbox.AnalogMax, drive.DriveMin, drive.DriveMax)
+		}
+
+		if leftInRange || rightInRange {
+			drive.Drive(left, right)
+		} else {
+			drive.Stop()
+		}
+
+		// TODO: this should be a timer check to maintain a maximum of 60 Hz
+		time.Sleep(time.Second / LoopRate)
+	}
 }
 
 func main() {
@@ -37,23 +78,12 @@ func main() {
 
 	fmt.Println("Starting Herschel control program...")
 
+	// Xbox init
 	xbox.Connect()
-
 	go xbox.Control()
 
+	// Start drive
 	drive.Connect()
 
-	fmt.Println("Start control loop...")
-
-	for {
-
-		if math.Abs(float64(xbox.Xbox.LeftStick.Y)) < 1000 && math.Abs(float64(xbox.Xbox.RightStick.Y)) < 1000 {
-			drive.Stop()
-		} else {
-			drive.Drive(mapRange(xbox.Xbox.LeftStick.Y, -32768, 32767, -255, 255), mapRange(xbox.Xbox.RightStick.Y, -32768, 32767, -255, 255))
-		}
-
-		// TODO: this should be a timer check to maintain a maximum of 60 Hz
-		time.Sleep(time.Second / 60)
-	}
+	loop()
 }

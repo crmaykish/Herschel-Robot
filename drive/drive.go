@@ -12,6 +12,9 @@ import (
 	"github.com/tarm/serial"
 )
 
+const DriveMax = 255
+const DriveMin = -255
+
 // Connected is the state of the serial port
 var Connected = false
 
