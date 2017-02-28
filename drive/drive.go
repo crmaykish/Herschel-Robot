@@ -8,6 +8,7 @@ import (
 
 	"strconv"
 
+	"github.com/crmaykish/herschel/audio"
 	"github.com/tarm/serial"
 )
 
@@ -27,6 +28,7 @@ func Connect() {
 		log.Fatal(err)
 	} else {
 		Connected = true
+		audio.Sound("communicationson")
 	}
 }
 
