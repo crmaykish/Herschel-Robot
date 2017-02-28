@@ -2,17 +2,15 @@ package main
 
 import (
 	"fmt"
-
-	"time"
-
 	"math"
+	"time"
 
 	xbox "github.com/crmaykish/Xboxdrv-Golang"
 	"github.com/crmaykish/herschel/drive"
 )
 
 func main() {
-	fmt.Println("Hello from Herschel")
+	fmt.Println("Starting Herschel control program...")
 
 	go xbox.Connect()
 
