@@ -32,7 +32,7 @@ func Connect() {
 	} else {
 		fmt.Println("Connected to Motor Board.")
 		Connected = true
-		audio.Sound("communicationson")
+		go audio.Sound("communicationson")
 	}
 }
 

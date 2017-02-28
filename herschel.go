@@ -8,6 +8,7 @@ import (
 	"time"
 
 	xbox "github.com/crmaykish/Xboxdrv-Golang"
+	"github.com/crmaykish/herschel/audio"
 	"github.com/crmaykish/herschel/drive"
 )
 
@@ -35,6 +36,8 @@ func stop() {
 	}
 	drive.Stop()
 	drive.Disconnect()
+
+	audio.Sound("deactivated")
 }
 
 // Main control loop
