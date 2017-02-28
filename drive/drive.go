@@ -27,6 +27,7 @@ func Connect() {
 	if err != nil {
 		log.Fatal(err)
 	} else {
+		fmt.Println("Connected to Motor Board.")
 		Connected = true
 		audio.Sound("communicationson")
 	}
@@ -38,11 +39,11 @@ func Disconnect() {
 	port.Flush()
 	port.Close()
 	Connected = false
+	fmt.Println("Disconnected from Motor Board")
 }
 
 func sendSerial(message string) {
 	if Connected {
-		fmt.Println("sending: " + message)
 		port.Write([]byte(message + "\n"))
 		// TODO: Up the baudrate and use a call/response system instead of just sleeping and hoping it's long enough
 		time.Sleep(time.Millisecond * 16)
