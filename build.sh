@@ -1,8 +1,8 @@
 #!/bin/bash
 
-HOSTNAME="herschel"
+HOSTNAME="herschel.home.cmaykish.com"
 SSH_USERNAME="colin"
-GO_WS="/c/go_ws/"
+GO_WS="/home/colin/go/"
 
 echo "Cross-compiling Herschel for Linux on ARM"
 env GOOS=linux GOARCH=arm GOARM=7 go build -o "$GO_WS"bin/arm/herschel herschel.go
