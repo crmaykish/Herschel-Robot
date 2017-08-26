@@ -4,12 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net"
 
 	"github.com/tarm/serial"
 )
 
 var port *serial.Port
 var reader *bufio.Reader
+
+var conn net.Conn
 
 type LidarData struct {
 	Distance        uint16
@@ -71,10 +74,12 @@ func printPacket(p Packet) {
 	}
 }
 
-func printPacketCSV(p Packet) {
+func printPacketCSV(p Packet) string {
+	var r string
 	for i := 0; i < 4; i++ {
-		fmt.Printf("%d,%d\n", int(p.Index)*4+i, p.Data[i].Distance)
+		r += fmt.Sprintf("%d,%d,%d\n", int(p.Index)*4+i, p.Data[i].Distance, p.Data[i].SignalStrength)
 	}
+	return r
 }
 
 func Connect() {
@@ -89,7 +94,11 @@ func Connect() {
 		reader = bufio.NewReader(port)
 	}
 
-	fmt.Println("index,distance")
+	ln, _ := net.Listen("tcp", ":9000")
+
+	conn, _ = ln.Accept()
+
+	fmt.Println("index,distance,signal")
 }
 
 // Disconnect from the serial port
@@ -127,7 +136,11 @@ func Read() {
 				// got there
 				packet := parsePacket(r)
 
-				printPacketCSV(packet)
+				for i := 0; i < 4; i++ {
+					conn.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
+				}
+
+				// printPacketCSV(packet)
 				// printPacket(packet)
 
 				// clear byte array
