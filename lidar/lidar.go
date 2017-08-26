@@ -36,6 +36,7 @@ func parsePacket(a [22]byte) Packet {
 	packet.Index = a[1] - 0xA0
 
 	// Rotational speed in RPM, TODO: I think there's more precision available here than just dividing by 64
+	// TODO: Add a PID control loop to maintain constant speed
 	packet.Speed = ((uint16(a[3]) << 8) + uint16(a[2])) / 64
 
 	// Parse the four data readings
@@ -57,6 +58,8 @@ func parsePacket(a [22]byte) Packet {
 		// Signal strength
 		packet.Data[i].SignalStrength = uint16((b3 << 8) + b2)
 	}
+
+	// TODO: add the checksum calculation
 
 	return packet
 }
