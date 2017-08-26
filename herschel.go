@@ -10,6 +10,7 @@ import (
 	xbox "github.com/crmaykish/Xboxdrv-Golang"
 	"github.com/crmaykish/herschel/audio"
 	"github.com/crmaykish/herschel/drive"
+	"github.com/crmaykish/herschel/lidar"
 )
 
 // LoopRate is the rate to run the control loop at (in Hertz)
@@ -36,6 +37,9 @@ func stop() {
 	}
 	drive.Stop()
 	drive.Disconnect()
+
+	// todo something with this
+	// lidar.Disconnect()
 
 	audio.Sound("deactivated")
 }
@@ -81,12 +85,15 @@ func main() {
 
 	fmt.Println("Starting Herschel control program...")
 
-	// Xbox init
-	xbox.Connect()
-	go xbox.Control()
+	// // Xbox init
+	// xbox.Connect()
+	// go xbox.Control()
 
-	// Start drive
-	drive.Connect()
+	// // Start drive
+	// drive.Connect()
 
-	loop()
+	// loop()
+
+	lidar.Connect()
+	lidar.Read()
 }
