@@ -71,8 +71,14 @@ func printPacket(p Packet) {
 	}
 }
 
+func printPacketCSV(p Packet) {
+	for i := 0; i < 4; i++ {
+		fmt.Printf("%d,%d\n", int(p.Index)*4+i, p.Data[i].Distance)
+	}
+}
+
 func Connect() {
-	fmt.Println("Connecting to Lidar...")
+	// fmt.Println("Connecting to Lidar...")
 	c := &serial.Config{Name: "/dev/ttyUSB1", Baud: 115200}
 	var err error
 	port, err = serial.OpenPort(c)
@@ -82,15 +88,17 @@ func Connect() {
 	} else {
 		reader = bufio.NewReader(port)
 	}
+
+	fmt.Println("index,distance")
 }
 
 // Disconnect from the serial port
 func Disconnect() {
-	fmt.Println("Disconnecting from Lidar...")
+	// fmt.Println("Disconnecting from Lidar...")
 	port.Flush()
 	port.Close()
 	// Connected = false
-	fmt.Println("Disconnected from Lidar")
+	// fmt.Println("Disconnected from Lidar")
 }
 
 func Read() {
@@ -119,7 +127,8 @@ func Read() {
 				// got there
 				packet := parsePacket(r)
 
-				printPacket(packet)
+				printPacketCSV(packet)
+				// printPacket(packet)
 
 				// clear byte array
 				for j := 0; j < 22; j++ {
