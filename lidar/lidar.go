@@ -12,6 +12,8 @@ import (
 var port *serial.Port
 var reader *bufio.Reader
 
+var serialConnected bool
+
 var client net.Conn
 
 var clientConnected bool
@@ -108,6 +110,7 @@ func Connect() {
 		log.Fatal(err)
 	} else {
 		reader = bufio.NewReader(port)
+		serialConnected = true
 	}
 }
 
@@ -116,6 +119,7 @@ func Disconnect() {
 	fmt.Println("Disconnecting from Lidar...")
 	port.Flush()
 	port.Close()
+	serialConnected = false
 	fmt.Println("Disconnected from Lidar")
 }
 
@@ -126,40 +130,41 @@ func Read() {
 	fmt.Println("Reading LIDAR data...")
 
 	for {
-		b, err := reader.ReadByte()
+		if serialConnected {
+			b, err := reader.ReadByte()
 
-		if err != nil {
-			log.Print(err)
-		} else {
+			if err != nil {
+				log.Print(err)
+			} else {
 
-			if b == 0xFA {
-				// clear byte array
-				for j := 0; j < 22; j++ {
-					r[j] = 0
-				}
-				i = 0
-
-			}
-			r[i] = b
-			i++
-
-			if i == 22 {
-				// got there
-				packet := parsePacket(r)
-
-				if clientConnected {
-					for i := 0; i < 4; i++ {
-						client.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
+				if b == 0xFA {
+					// clear byte array
+					for j := 0; j < 22; j++ {
+						r[j] = 0
 					}
-				}
+					i = 0
 
-				// clear byte array
-				for j := 0; j < 22; j++ {
-					r[j] = 0
 				}
-				i = 0
+				r[i] = b
+				i++
+
+				if i == 22 {
+					// got there
+					packet := parsePacket(r)
+
+					if clientConnected {
+						for i := 0; i < 4; i++ {
+							client.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
+						}
+					}
+
+					// clear byte array
+					for j := 0; j < 22; j++ {
+						r[j] = 0
+					}
+					i = 0
+				}
 			}
-
 		}
 	}
 }
