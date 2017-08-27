@@ -116,7 +116,6 @@ func Disconnect() {
 	fmt.Println("Disconnecting from Lidar...")
 	port.Flush()
 	port.Close()
-	// Connected = false
 	fmt.Println("Disconnected from Lidar")
 }
 

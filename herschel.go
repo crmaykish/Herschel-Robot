@@ -1,12 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
 	xbox "github.com/crmaykish/Xboxdrv-Golang"
+	"github.com/crmaykish/herschel/audio"
 	"github.com/crmaykish/herschel/drive"
 	"github.com/crmaykish/herschel/lidar"
 )
@@ -30,16 +32,16 @@ func between(x, min, max int) bool {
 
 // Stop motors and disconnect serial connection
 func stop() {
-	// if !drive.Connected {
-	// 	drive.Connect()
-	// }
-	// drive.Stop()
-	// drive.Disconnect()
+	if !drive.Connected {
+		drive.Connect()
+	}
+	drive.Stop()
+	drive.Disconnect()
 
 	// todo something with this
-	// lidar.Disconnect()
+	lidar.Disconnect()
 
-	// audio.Sound("deactivated")
+	audio.Sound("deactivated")
 }
 
 // Main control loop
@@ -77,23 +79,23 @@ func main() {
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-c
-		// stop()
+		stop()
 		os.Exit(1)
 	}()
 
-	// fmt.Println("Starting Herschel control program...")
+	fmt.Println("Starting Herschel control program...")
 
-	// // Xbox init
-	// xbox.Connect()
-	// go xbox.Control()
-
-	// // Start drive
-	// drive.Connect()
-
-	// loop()
-
-	go lidar.SocketServer()
+	// Xbox init
+	xbox.Connect()
+	go xbox.Control()
 
 	lidar.Connect()
-	lidar.Read()
+	go lidar.SocketServer()
+	go lidar.Read()
+
+	// Start drive
+	drive.Connect()
+
+	loop()
+
 }
