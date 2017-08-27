@@ -12,7 +12,9 @@ import (
 var port *serial.Port
 var reader *bufio.Reader
 
-var conn net.Conn
+var client net.Conn
+
+var clientConnected bool
 
 type LidarData struct {
 	Distance        uint16
@@ -82,8 +84,22 @@ func printPacketCSV(p Packet) string {
 	return r
 }
 
+func SocketServer() {
+	fmt.Println("Starting socket server...")
+	ln, _ := net.Listen("tcp", ":9000")
+
+	clientConnected = false
+
+	for {
+		client, _ = ln.Accept()
+		fmt.Println("Client connected")
+		clientConnected = true
+	}
+
+}
+
 func Connect() {
-	// fmt.Println("Connecting to Lidar...")
+	fmt.Println("Connecting to Lidar...")
 	c := &serial.Config{Name: "/dev/ttyUSB1", Baud: 115200}
 	var err error
 	port, err = serial.OpenPort(c)
@@ -93,26 +109,22 @@ func Connect() {
 	} else {
 		reader = bufio.NewReader(port)
 	}
-
-	ln, _ := net.Listen("tcp", ":9000")
-
-	conn, _ = ln.Accept()
-
-	fmt.Println("index,distance,signal")
 }
 
 // Disconnect from the serial port
 func Disconnect() {
-	// fmt.Println("Disconnecting from Lidar...")
+	fmt.Println("Disconnecting from Lidar...")
 	port.Flush()
 	port.Close()
 	// Connected = false
-	// fmt.Println("Disconnected from Lidar")
+	fmt.Println("Disconnected from Lidar")
 }
 
 func Read() {
 	var r [22]byte
 	var i int
+
+	fmt.Println("Reading LIDAR data...")
 
 	for {
 		b, err := reader.ReadByte()
@@ -136,12 +148,11 @@ func Read() {
 				// got there
 				packet := parsePacket(r)
 
-				for i := 0; i < 4; i++ {
-					conn.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
+				if clientConnected {
+					for i := 0; i < 4; i++ {
+						client.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
+					}
 				}
-
-				// printPacketCSV(packet)
-				// printPacket(packet)
 
 				// clear byte array
 				for j := 0; j < 22; j++ {

@@ -92,6 +92,8 @@ func main() {
 
 	// loop()
 
+	go lidar.SocketServer()
+
 	lidar.Connect()
 	lidar.Read()
 }
