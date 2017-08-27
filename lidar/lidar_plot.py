@@ -5,13 +5,12 @@ from PyQt4.QtCore import QThread
 import pyqtgraph as pg
 import numpy as np
 
-SIGNAL_THRESHOLD = 50
+SIGNAL_THRESHOLD = 20
 SERVER_URL = "192.168.1.138"
 SERVER_PORT = 9000
 
 p6 = None
 curve = None
-ptr = 0
 
 xs = []
 ys = []
@@ -57,30 +56,31 @@ class LidarSocketThread(QThread):
 def distance_to_xy(angle, distance, signal):
     x = 0
     y = 0
-    # if signal > SIGNAL_THRESHOLD:
     x = distance * np.cos(np.deg2rad(angle))
     y = distance * np.sin(np.deg2rad(angle))
     return x, y
 
 def update():
-    global curve, ptr, p6, xs, ys
-    curve.setData(xs, ys)
-    if ptr == 0:
-        p6.enableAutoRange('xy', False)  ## stop auto-scaling after the first data set is plotted
-    ptr += 1
+    global curve, p6, xs, ys
+    if len(xs) == 359 and len(ys) == 359:
+        # TODO: actually fix this problem. why is the size going to 360 sometimes?
+        curve.setData(xs, ys)
 
 def main():
     app = QtGui.QApplication([])
     win = pg.GraphicsWindow(title="LIDAR Real-time Display")
-    win.resize(1280,720)
+    win.resize(800,800)
     win.setWindowTitle('LIDAR Display')
 
     pg.setConfigOptions(antialias=True)
 
-    global p6, curve, ptr
+    global p6, curve
     p6 = win.addPlot(title="LIDAR")
-    curve = p6.plot(pen=None, symbolSize=10)
-    ptr = 0
+    curve = p6.plot(pen=None, symbolSize=5)
+
+    p6.setXRange(-800, 800)
+    p6.setYRange(-800, 800)
+    p6.showGrid(True, True)
 
     timer = QtCore.QTimer()
     timer.timeout.connect(update)
