@@ -1,6 +1,6 @@
 #!/bin/bash
 
-HOSTNAME="herschel.home.cmaykish.com"
+HOSTNAME="192.168.1.138"
 SSH_USERNAME="colin"
 GO_WS="/home/colin/go/"
 
