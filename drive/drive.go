@@ -8,7 +8,6 @@ import (
 
 	"strconv"
 
-	"github.com/crmaykish/herschel/audio"
 	"github.com/tarm/serial"
 )
 
@@ -32,7 +31,6 @@ func Connect() {
 	} else {
 		fmt.Println("Connected to Motor Board.")
 		Connected = true
-		go audio.Sound("communicationson")
 	}
 }
 

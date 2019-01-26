@@ -7,10 +7,10 @@ import (
 	"syscall"
 	"time"
 
-	xbox "github.com/crmaykish/xboxdrv-go"
 	"github.com/crmaykish/herschel/audio"
 	"github.com/crmaykish/herschel/drive"
 	"github.com/crmaykish/herschel/lidar"
+	xbox "github.com/crmaykish/xboxdrv-go"
 )
 
 // LoopRate is the rate to run the control loop at (in Hertz)
