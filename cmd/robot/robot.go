@@ -7,9 +7,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/crmaykish/herschel/audio"
-	"github.com/crmaykish/herschel/drive"
-	"github.com/crmaykish/herschel/lidar"
+	"github.com/crmaykish/herschel/pkg/audio"
+	"github.com/crmaykish/herschel/pkg/drive"
+	"github.com/crmaykish/herschel/pkg/lidar"
 	xbox "github.com/crmaykish/xboxdrv-go"
 )
 

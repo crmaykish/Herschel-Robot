@@ -152,8 +152,10 @@ func Read() {
 					// got there
 					packet := parsePacket(r)
 
-					if clientConnected {
-						for i := 0; i < 4; i++ {
+					for i := 0; i < 4; i++ {
+						fmt.Printf("%d, %d, %d\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)
+
+						if clientConnected {
 							client.Write([]byte(fmt.Sprintf("*%d,%d,%d!\n", int(packet.Index)*4+i, packet.Data[i].Distance, packet.Data[i].SignalStrength)))
 						}
 					}

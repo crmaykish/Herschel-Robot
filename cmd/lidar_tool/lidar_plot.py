@@ -5,8 +5,8 @@ from PyQt4.QtCore import QThread
 import pyqtgraph as pg
 import numpy as np
 
-SIGNAL_THRESHOLD = 20
-SERVER_URL = "192.168.1.138"
+SIGNAL_THRESHOLD = 0
+SERVER_URL = "localhost"
 SERVER_PORT = 9000
 
 p6 = None
