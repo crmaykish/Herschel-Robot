@@ -1,11 +1,5 @@
 #include <Arduino.h>
 
-// Debug
-#define DEBUG           1
-#ifndef DEBUG
-#define Serial          Serial1
-#endif
-
 // Pins
 #define LEFT_FORWARD    9
 #define LEFT_REVERSE    10
@@ -32,12 +26,12 @@ typedef struct {
 command_t current_command;
 
 void setup() {
-    Serial.begin(SERIAL_BAUD);
+    Serial1.begin(SERIAL_BAUD);
 }
 
 void loop() {
-    while (Serial.available()) {
-        String message = Serial.readStringUntil(END_CHAR);
+    while (Serial1.available()) {
+        String message = Serial1.readStringUntil(END_CHAR);
 
         parse_message(&current_command, message);
 
@@ -97,6 +91,6 @@ void parse_message(command_t* com, String message) {
 }
 
 void send_reply(String message) {
-    Serial.print(message);
-    Serial.print(END_CHAR);
+    Serial1.print(message);
+    Serial1.print(END_CHAR);
 }
